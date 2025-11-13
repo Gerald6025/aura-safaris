@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function BehindBrand() {
   return (
-    <section className="w-full py-20 text-black ">
+    <section className="w-full py-20 text-black  bg-white">
       <div className="w-full  px-4 sm:px-6 lg:px-12">
         <div className="flex flex-col items-center text-center gap-2">
           <p className="text-sm text-black">Where the Spirit of Africa Comes Alive</p>

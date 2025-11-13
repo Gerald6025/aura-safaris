@@ -39,7 +39,7 @@ const testimonials = [
 
 const Testimonials = () => {
   return (
-    <section className="w-full  py-20 h-auto">
+    <section className="w-full  py-20 h-auto bg-white">
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex flex-col items-center text-center gap-2">
           <p className="text-[14px] text-black">Your Journey, Our Passion</p>

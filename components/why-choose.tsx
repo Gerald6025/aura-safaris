@@ -35,7 +35,7 @@ const features = [
 
 const WhyChoose = () => {
   return (
-    <section className="w-full bg-white mt-10  h-auto">
+    <section className="w-full bg-white mt-10  h-auto text-black">
       <div className="mx-auto max-w-6xl px-6 py-20">
         <div className="flex flex-col items-center text-center gap-2">
           <p className="text-[14px] text-black">Your Journey, Our Passion</p>

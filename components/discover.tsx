@@ -4,7 +4,7 @@ import Image from 'next/image'
 const Discover = () => {
   const [open, setOpen] = useState<{ [key: number]: boolean }>({})
   return (
-    <div className="w-full h-auto ">
+    <div className="w-full h-auto text-black bg-white ">
       <div className='w-full h-[400px] flex flex-col pt-20 items-center gap-1 '>
   <p className='w-[147px] h-[29px]  text-[16px]'> Discover Our World</p>
   <h1 className='w-full max-w-4xl px-4 text-center font-bold leading-tight text-3xl sm:text-4xl md:text-5xl lg:text-6xl'>Featured Experiences</h1>
