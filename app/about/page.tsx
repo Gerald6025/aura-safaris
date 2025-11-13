@@ -3,7 +3,7 @@ import BehindBrand from "@/components/behind-brand";
 
 export default function About() {
   return (  
-    <main className="">
+    <main className="bg-white">
     <Heroab />
     <BehindBrand/>
      
