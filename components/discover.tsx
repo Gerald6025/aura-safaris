@@ -1,6 +1,7 @@
 "use client"
 import React, { useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 const Discover = () => {
   const [open, setOpen] = useState<{ [key: number]: boolean }>({})
   return (
@@ -70,13 +71,13 @@ const Discover = () => {
                   <p className='mt-2 text-xs leading-relaxed text-black'>
                     {card.description}
                   </p>
-                  <button
-                    type='button'
+                  <Link
+                    href={`/book?activity=${encodeURIComponent(card.title)}`}
                     className='mt-3 mx-auto inline-flex items-center justify-center rounded-md bg-[#cc9933] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#b3832b] transition-colors shadow-sm'
                     onClick={(e) => e.stopPropagation()}
                   >
                     Book this Activity
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
