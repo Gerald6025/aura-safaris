@@ -1,231 +1,186 @@
 "use client"
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+
+interface Booking {
+  id: string
+  bookingDate: string
+  service: string
+  status: string
+  adminNotes?: string
+  createdAt: string
+}
 
 export default function BookPage() {
-  const searchParams = useSearchParams()
-  const [bookingType, setBookingType] = useState<'accommodation' | 'activity'>('activity')
-  const [activity, setActivity] = useState('')
-  const [accommodation, setAccommodation] = useState('')
+  const { data: session, status } = useSession()
+  const [bookings, setBookings] = useState<Booking[]>([])
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    checkIn: '',
-    checkOut: '',
-    guests: '',
-    requests: ''
+    bookingDate: '',
+    service: ''
   })
-  const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
   useEffect(() => {
-    const activityParam = searchParams.get('activity')
-    if (activityParam) {
-      setBookingType('activity')
-      setActivity(activityParam)
+    if (session) {
+      fetchBookings()
     }
-  }, [searchParams])
+  }, [session])
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // In a real app, this would send to backend
-    setSubmitted(true)
+  const fetchBookings = async () => {
+    try {
+      const response = await fetch('/api/bookings')
+      if (response.ok) {
+        const data = await response.json()
+        setBookings(data.bookings)
+      }
+    } catch (error) {
+      console.error('Error fetching bookings:', error)
+    }
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+    setSuccess('')
+
+    try {
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          bookingDate: formData.bookingDate,
+          service: formData.service,
+        }),
+      })
+
+      if (response.ok) {
+        setSuccess('Booking created successfully!')
+        setFormData({ bookingDate: '', service: '' })
+        fetchBookings()
+      } else {
+        const data = await response.json()
+        setError(data.error || 'Failed to create booking')
+      }
+    } catch (error) {
+      setError('An error occurred. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
-  if (submitted) {
-    return (
-      <main className="mx-auto max-w-6xl px-6 py-16">
-        <div className="text-center">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-4">Booking Confirmed!</h1>
-          <p className="text-lg">Thank you for booking with Aura Safaris. We'll contact you soon with more details.</p>
-          <button
-            onClick={() => setSubmitted(false)}
-            className="mt-6 inline-flex items-center justify-center rounded-md bg-[#cc9933] px-6 py-3 text-sm font-medium text-white hover:bg-[#b3832b]"
-          >
-            Book Another
-          </button>
-        </div>
-      </main>
-    )
+  if (status === 'loading') {
+    return <div className="flex justify-center items-center min-h-screen">Loading...</div>
+  }
+
+  if (!session) {
+    return <div className="flex justify-center items-center min-h-screen">Please sign in to access this page.</div>
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-16">
-      <h1 className="text-3xl sm:text-4xl font-bold mb-8">Book Now</h1>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium mb-2">Booking Type</label>
-          <div className="flex gap-6">
-            <label className="flex items-center">
-              <input
-                type="radio"
-                name="bookingType"
-                value="activity"
-                checked={bookingType === 'activity'}
-                onChange={() => setBookingType('activity')}
-                className="mr-2"
-              />
-              Activity
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                name="bookingType"
-                value="accommodation"
-                checked={bookingType === 'accommodation'}
-                onChange={() => setBookingType('accommodation')}
-                className="mr-2"
-              />
-              Accommodation
-            </label>
-          </div>
-        </div>
-
-        {bookingType === 'activity' && (
-          <div>
-            <label htmlFor="activity" className="block text-sm font-medium mb-2">Select Activity</label>
-            <select
-              id="activity"
-              value={activity}
-              onChange={(e) => setActivity(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#cc9933]"
-              required
-            >
-              <option value="">Choose an activity</option>
-              <option value="Wildlife Safaris">Wildlife Safaris</option>
-              <option value="Victoria Falls Tours">Victoria Falls Tours</option>
-              <option value="Adventure Activities">Adventure Activities</option>
-              <option value="Luxury Packages">Luxury Packages</option>
-            </select>
-          </div>
-        )}
-
-        {bookingType === 'accommodation' && (
-          <div>
-            <label htmlFor="accommodation" className="block text-sm font-medium mb-2">Select Accommodation</label>
-            <select
-              id="accommodation"
-              value={accommodation}
-              onChange={(e) => setAccommodation(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#cc9933]"
-              required
-            >
-              <option value="">Choose accommodation</option>
-              <option value="Lodge Stays">Lodge Stays</option>
-              <option value="Camping">Camping</option>
-              <option value="Luxury Tents">Luxury Tents</option>
-              <option value="Private Villas">Private Villas</option>
-            </select>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium mb-2">Full Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#cc9933]"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-2">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#cc9933]"
-              required
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium mb-2">Phone Number</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#cc9933]"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="guests" className="block text-sm font-medium mb-2">Number of Guests</label>
-            <input
-              type="number"
-              id="guests"
-              name="guests"
-              value={formData.guests}
-              onChange={handleInputChange}
-              min="1"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#cc9933]"
-              required
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="checkIn" className="block text-sm font-medium mb-2">Check-in Date</label>
-            <input
-              type="date"
-              id="checkIn"
-              name="checkIn"
-              value={formData.checkIn}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#cc9933]"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="checkOut" className="block text-sm font-medium mb-2">Check-out Date</label>
-            <input
-              type="date"
-              id="checkOut"
-              name="checkOut"
-              value={formData.checkOut}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#cc9933]"
-              required
-            />
-          </div>
-        </div>
-
-        <div>
-          <label htmlFor="requests" className="block text-sm font-medium mb-2">Special Requests</label>
-          <textarea
-            id="requests"
-            name="requests"
-            value={formData.requests}
-            onChange={handleInputChange}
-            rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#cc9933]"
-            placeholder="Any special requests or requirements..."
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="w-full inline-flex items-center justify-center rounded-md bg-[#cc9933] px-6 py-3 text-sm font-medium text-white hover:bg-[#b3832b] transition-colors"
-        >
-          Submit Booking
-        </button>
-      </form>
+    <>
+    <main className="mx-auto w-full px-6 bg-[#0000006e] bg-blend-overlay py-16 bg-[url(https://res.cloudinary.com/dvqhcm07a/image/upload/v1762774213/d32fec43cdffe3f5cb38b11b959b772e6dd6ff85_o7bqjj.png)] h-[40vh] flex flex-col items-center justify-center bg-cover bg-center">
+      <h1 className="text-7xl  font-bold text-white text-left">My Bookings</h1>
+     
     </main>
+    <main className="mx-auto max-w-6xl px-6 py-16">
+
+      {/* Create Booking Form */}
+      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h2 className="text-xl font-semibold mb-4">Create New Booking</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="service" className="block text-sm font-medium mb-2">Service/Resource</label>
+            <select
+              id="service"
+              name="service"
+              value={formData.service}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#cc9933]"
+              required
+            >
+              <option value="">Select a service</option>
+              <option value="Wildlife Safari">Wildlife Safari</option>
+              <option value="Victoria Falls Tour">Victoria Falls Tour</option>
+              <option value="Adventure Activity">Adventure Activity</option>
+              <option value="Luxury Package">Luxury Package</option>
+              <option value="Lodge Stay">Lodge Stay</option>
+              <option value="Camping">Camping</option>
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="bookingDate" className="block text-sm font-medium mb-2">Booking Date & Time</label>
+            <input
+              type="datetime-local"
+              id="bookingDate"
+              name="bookingDate"
+              value={formData.bookingDate}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#cc9933]"
+              required
+            />
+          </div>
+
+          {error && <p className="text-red-500">{error}</p>}
+          {success && <p className="text-green-500">{success}</p>}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full inline-flex items-center justify-center rounded-md bg-[#cc9933] px-6 py-3 text-sm font-medium text-white hover:bg-[#b3832b] transition-colors disabled:opacity-50"
+          >
+            {loading ? 'Creating...' : 'Create Booking'}
+          </button>
+        </form>
+      </div>
+
+      {/* Bookings List */}
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold mb-4">My Bookings</h2>
+        {bookings.length === 0 ? (
+          <p className="text-gray-500">No bookings found.</p>
+        ) : (
+          <div className="space-y-4">
+            {bookings.map((booking) => (
+              <div key={booking.id} className="border border-gray-200 rounded-lg p-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-medium">{booking.service}</h3>
+                    <p className="text-sm text-gray-600">
+                      Date: {new Date(booking.bookingDate).toLocaleString()}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      Created: {new Date(booking.createdAt).toLocaleDateString()}
+                    </p>
+                    {booking.adminNotes && (
+                      <p className="text-sm text-gray-600 mt-2">
+                        Notes: {booking.adminNotes}
+                      </p>
+                    )}
+                  </div>
+                  <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                    booking.status === 'approved' ? 'bg-green-100 text-green-800' :
+                    booking.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                    'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {booking.status}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </main>
+    </>
   )
 }
