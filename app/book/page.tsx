@@ -87,12 +87,12 @@ export default function BookPage() {
 
   return (
     <>
-    <main className="mx-auto w-full px-6 bg-[#0000006e] bg-blend-overlay py-16 bg-[url(https://res.cloudinary.com/dvqhcm07a/image/upload/v1762774213/d32fec43cdffe3f5cb38b11b959b772e6dd6ff85_o7bqjj.png)] h-[40vh] flex flex-col items-center justify-center bg-cover bg-center">
-      <h1 className="text-7xl  font-bold text-white text-left">My Bookings</h1>
+    <main className="mx-auto w-full px-6 bg-[#0000006e] bg-blend-overlay py-16 bg-[url(https://res.cloudinary.com/dvqhcm07a/image/upload/v1762774213/d32fec43cdffe3f5cb38b11b959b772e6dd6ff85_o7bqjj.png)] h-[10vh] flex flex-col items-center justify-center bg-cover bg-center">
+      
      
     </main>
     <main className="mx-auto max-w-6xl px-6 py-16">
-
+<h1 className="text-7xl  font-bold  text-left">Bookings</h1>
       {/* Create Booking Form */}
       <div className="bg-white p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-xl font-semibold mb-4">Create New Booking</h2>
