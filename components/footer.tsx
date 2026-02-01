@@ -64,10 +64,12 @@ const Footer = () => {
                   href="mailto:kunakatadiwanashe@gmail.com"
                   className="hover:text-white break-all"
                 >
-                  kunakatadiwanashe@gmail.com
+                  info@aurasafaris.co.zw
                 </a>
               </li>
-              <li>Victoria Falls, Zimbabwe</li>
+              <li>
+                Address: Flat 7, Old Bata Building, Victoria Falls, Zimbabwe
+              </li>
             </ul>
           </div>
 

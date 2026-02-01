@@ -26,7 +26,7 @@ const Navbar = () => {
           <ul className="hidden sm:flex items-center gap-6 text-white">
             <li><Link href="/" className="hover:text-black">Home</Link></li>
             <li><Link href="/about" className="hover:text-black">About</Link></li>
-            <li><Link href="/tour" className="hover:text-black">Tour</Link></li>
+            {/* <li><Link href="/tour" className="hover:text-black">Tour</Link></li> */}
             <li><Link href="/services" className="hover:text-black">Services</Link></li>
             <li><Link href="/gallery" className="hover:text-black">Gallery</Link></li>
             <li><Link href="/contact" className="hover:text-black">Contact</Link></li>
@@ -67,7 +67,7 @@ const Navbar = () => {
             <ul className="flex flex-col divide-y divide-white/10">
               <li><Link onClick={() => setOpen(false)} href="/" className="block px-4 py-3">Home</Link></li>
               <li><Link onClick={() => setOpen(false)} href="/about" className="block px-4 py-3">About</Link></li>
-              <li><Link onClick={() => setOpen(false)} href="/tour" className="block px-4 py-3">Tour</Link></li>
+              {/* <li><Link onClick={() => setOpen(false)} href="/tour" className="block px-4 py-3">Tour</Link></li> */}
               <li><Link onClick={() => setOpen(false)} href="/services" className="block px-4 py-3">Services</Link></li>
               <li><Link onClick={() => setOpen(false)} href="/gallery" className="block px-4 py-3">Gallery</Link></li>
               <li><Link onClick={() => setOpen(false)} href="/contact" className="block px-4 py-3">Contact</Link></li>
