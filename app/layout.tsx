@@ -1,32 +1,31 @@
-import type { Metadata } from "next";
-import { Raleway } from "next/font/google";
-import "./globals.css";
-import Footer from "../components/footer";
-import Navbar from "../components/navbar";
+import type { Metadata } from 'next'
+import { Raleway } from 'next/font/google'
+import './globals.css'
+import { Providers } from '@/components/providers'
+import Navbar from '@/components/navbar'
+import Footer from '@/components/footer'
 
-const raleway = Raleway({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  display: "swap",
-});
+const raleway = Raleway({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: "Aura Safaris",
-  description: "Explore the wild with Aura Safaris",
-};
+  title: 'Aura Safaris',
+  description: 'Experience the beauty of African wildlife',
+}
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
       <body className={`${raleway.className} antialiased`}>
-        <Navbar />
-        {children}
-        <Footer />
+        <Providers>
+          <Navbar />
+          {children}
+          <Footer />
+        </Providers>
       </body>
     </html>
-  );
+  )
 }

@@ -1,9 +1,16 @@
 "use client"
 import Link from "next/link"
 import React, { useState } from "react"
+import { useSession, signOut } from 'next-auth/react'
 
 const Navbar = () => {
   const [open, setOpen] = useState(false)
+  const { data: session, status } = useSession()
+
+  const handleSignOut = () => {
+    signOut({ callbackUrl: '/' })
+  }
+
   return (
     <header className="absolute top-4 sm:top-6 left-0 right-0 z-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -19,15 +26,40 @@ const Navbar = () => {
           <ul className="hidden sm:flex items-center gap-6 text-white">
             <li><Link href="/" className="hover:text-black">Home</Link></li>
             <li><Link href="/about" className="hover:text-black">About</Link></li>
-            <li><Link href="/tour" className="hover:text-black">Tour</Link></li>
+            {/* <li><Link href="/tour" className="hover:text-black">Tour</Link></li> */}
             <li><Link href="/services" className="hover:text-black">Services</Link></li>
             <li><Link href="/gallery" className="hover:text-black">Gallery</Link></li>
             <li><Link href="/contact" className="hover:text-black">Contact</Link></li>
+            {session?.user?.role === 'admin' && (
+              <li><Link href="/admin" className="hover:text-black">Admin</Link></li>
+            )}
           </ul>
 
-          <Link href="/book" className="hidden sm:inline-flex items-center justify-center rounded-md bg-white text-black px-4 py-2 text-sm font-medium border-2 border-[#cc9933]">
-            Book Now
-          </Link>
+          <div className="hidden sm:flex items-center gap-4">
+            {session ? (
+              <>
+                <span className="text-white text-sm">Welcome, {session.user.name}</span>
+                <button
+                  onClick={handleSignOut}
+                  className="inline-flex items-center justify-center rounded-md bg-white text-black px-4 py-2 text-sm font-medium hover:bg-gray-100"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="text-white hover:text-black">Login</Link>
+                <Link href="/signup" className="inline-flex items-center justify-center rounded-md bg-white text-black px-4 py-2 text-sm font-medium hover:bg-gray-100">
+                  Sign Up
+                </Link>
+              </>
+            )}
+            {session && (
+              <Link href="/book" className="inline-flex items-center justify-center rounded-md bg-white text-black px-4 py-2 text-sm font-medium border-2 border-[#cc9933]">
+                Book Now
+              </Link>
+            )}
+          </div>
         </nav>
 
         {open && (
@@ -35,11 +67,24 @@ const Navbar = () => {
             <ul className="flex flex-col divide-y divide-white/10">
               <li><Link onClick={() => setOpen(false)} href="/" className="block px-4 py-3">Home</Link></li>
               <li><Link onClick={() => setOpen(false)} href="/about" className="block px-4 py-3">About</Link></li>
-              <li><Link onClick={() => setOpen(false)} href="/tour" className="block px-4 py-3">Tour</Link></li>
+              {/* <li><Link onClick={() => setOpen(false)} href="/tour" className="block px-4 py-3">Tour</Link></li> */}
               <li><Link onClick={() => setOpen(false)} href="/services" className="block px-4 py-3">Services</Link></li>
               <li><Link onClick={() => setOpen(false)} href="/gallery" className="block px-4 py-3">Gallery</Link></li>
               <li><Link onClick={() => setOpen(false)} href="/contact" className="block px-4 py-3">Contact</Link></li>
-              <li><Link onClick={() => setOpen(false)} href="/book" className="block px-4 py-3">Book Now</Link></li>
+              {session?.user?.role === 'admin' && (
+                <li><Link onClick={() => setOpen(false)} href="/admin" className="block px-4 py-3">Admin</Link></li>
+              )}
+              {session ? (
+                <>
+                  <li className="px-4 py-3 text-sm">Welcome, {session.user.name}</li>
+                  <li><button onClick={() => { handleSignOut(); setOpen(false); }} className="block px-4 py-3 w-full text-left">Sign Out</button></li>
+                </>
+              ) : (
+                <>
+                  <li><Link onClick={() => setOpen(false)} href="/login" className="block px-4 py-3">Login</Link></li>
+                  <li><Link onClick={() => setOpen(false)} href="/signup" className="block px-4 py-3">Sign Up</Link></li>
+                </>
+              )}
             </ul>
           </div>
         )}

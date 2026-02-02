@@ -8,7 +8,7 @@ const Footer = () => {
       className="relative w-full"
       style={{
         backgroundImage:
-          "url(https://res.cloudinary.com/dvqhcm07a/image/upload/v1762351365/e1e0bbbb01f01d5826b09c4e39bfc6ec115794b4_exgw90.jpg)",
+          "url(https://res.cloudinary.com/dvqhcm07a/image/upload/v1762774213/d32fec43cdffe3f5cb38b11b959b772e6dd6ff85_o7bqjj.png)",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
@@ -64,10 +64,12 @@ const Footer = () => {
                   href="mailto:kunakatadiwanashe@gmail.com"
                   className="hover:text-white break-all"
                 >
-                  kunakatadiwanashe@gmail.com
+                  info@aurasafaris.co.zw
                 </a>
               </li>
-              <li>Victoria Falls, Zimbabwe</li>
+              <li>
+                Address: Flat 7, Old Bata Building, Victoria Falls, Zimbabwe
+              </li>
             </ul>
           </div>
 
